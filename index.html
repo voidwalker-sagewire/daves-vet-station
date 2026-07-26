@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dave's Vet Station — Who are we seeing today?</title>
+<meta name="description" content="Dave's Vet Station: pick your patient, get routed to the right vet." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#0A1F33;
+    --navy-panel:#0F2A47;
+    --af-blue:#00308F;
+    --af-blue-hi:#3D6FB4;
+    --brass:#C9A227;
+    --cloud:#F2F5F8;
+    --steel:#7F92A8;
+    --steel-dim:#4C5F73;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-tap-highlight-color:transparent;}
+  body{
+    background:var(--navy-deep);
+    color:var(--cloud);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    line-height:1.5;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* ---- header ---- */
+  header{
+    display:flex;align-items:center;gap:12px;
+    padding:18px 20px 16px;
+    border-bottom:1px solid rgba(201,162,39,0.35);
+  }
+  .badge{width:38px;height:38px;flex-shrink:0;}
+  .wordmark{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:1.05rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--cloud);
+  }
+  .wordmark span{color:var(--af-blue-hi);}
+  .tagline{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.62rem;
+    color:var(--steel);
+    letter-spacing:0.06em;
+    margin-top:2px;
+  }
+
+  /* ---- hero ---- */
+  .hero{
+    position:relative;
+    padding:44px 20px 28px;
+    overflow:hidden;
+    text-align:center;
+  }
+  .hero-badge{
+    position:absolute;
+    top:50%;left:50%;
+    width:340px;height:340px;
+    transform:translate(-50%,-55%);
+    opacity:0.05;
+    pointer-events:none;
+  }
+  .hero h1{
+    position:relative;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:2rem;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+    color:var(--cloud);
+    max-width:320px;
+    margin:0 auto 10px;
+  }
+  .hero p{
+    position:relative;
+    font-size:0.9rem;
+    color:var(--steel);
+    max-width:280px;
+    margin:0 auto;
+  }
+
+  /* ---- roster ---- */
+  .roster{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:14px;
+    padding:8px 18px 28px;
+    max-width:520px;
+    margin:0 auto;
+  }
+  @media(min-width:600px){
+    .roster{grid-template-columns:1fr 1fr;}
+  }
+  .plate{
+    position:relative;
+    background:var(--navy-panel);
+    border:1px solid rgba(127,146,168,0.25);
+    border-radius:10px;
+    padding:20px 18px 18px;
+    transition:transform 0.15s ease, border-color 0.15s ease;
+  }
+  .plate.active:hover{
+    transform:translateY(-2px);
+    border-color:var(--af-blue-hi);
+  }
+  .plate.locked{
+    opacity:0.5;
+  }
+  .pin{
+    position:absolute;
+    top:10px;left:10px;
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--brass);
+    box-shadow:0 0 0 2px rgba(201,162,39,0.2);
+  }
+  .status-tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.6rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--af-blue-hi);
+    border:1px solid rgba(61,111,180,0.4);
+    border-radius:4px;
+    padding:3px 7px;
+    margin-bottom:12px;
+  }
+  .plate.locked .status-tag{
+    color:var(--steel);
+    border-color:rgba(127,146,168,0.3);
+  }
+  .plate-name{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:1.3rem;
+    letter-spacing:0.01em;
+    color:var(--cloud);
+  }
+  .plate-role{
+    font-size:0.78rem;
+    color:var(--steel);
+    margin:4px 0 10px;
+  }
+  .plate-blurb{
+    font-size:0.82rem;
+    color:#C7D3DE;
+    margin-bottom:16px;
+    min-height:38px;
+  }
+  .ask-btn{
+    display:block;
+    text-align:center;
+    background:var(--af-blue);
+    color:var(--cloud);
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    font-size:0.82rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    border-radius:7px;
+    padding:11px;
+    transition:background 0.15s ease;
+  }
+  .ask-btn:hover{background:var(--af-blue-hi);}
+  .locked-note{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.68rem;
+    color:var(--steel-dim);
+    text-align:center;
+    padding:11px;
+    border:1px dashed rgba(127,146,168,0.3);
+    border-radius:7px;
+  }
+
+  /* ---- footer strip ---- */
+  footer{
+    border-top:1px solid rgba(201,162,39,0.25);
+    padding:18px 20px 26px;
+    text-align:center;
+  }
+  .promise{
+    font-family:'Oswald',sans-serif;
+    font-size:0.95rem;
+    font-weight:600;
+    color:var(--cloud);
+    margin-bottom:6px;
+  }
+  .promise span{color:var(--brass);}
+  .poison-line{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--steel);
+    margin-bottom:12px;
+  }
+  .disclaimer{
+    font-size:0.68rem;
+    color:var(--steel-dim);
+    max-width:340px;
+    margin:0 auto;
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="badge" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="47" fill="none" stroke="#00308F" stroke-width="5"/>
+    <rect x="42" y="18" width="16" height="64" fill="#00308F"/>
+    <rect x="18" y="42" width="64" height="16" fill="#00308F"/>
+  </svg>
+  <div>
+    <div class="wordmark">DAVE'S <span>VET STATION</span></div>
+    <div class="tagline">FRONT DESK · CHECK-IN</div>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="hero-badge" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="47" fill="none" stroke="#F2F5F8" stroke-width="4"/>
+    <rect x="42" y="18" width="16" height="64" fill="#F2F5F8"/>
+    <rect x="18" y="42" width="64" height="16" fill="#F2F5F8"/>
+  </svg>
+  <h1>Who are we seeing today?</h1>
+  <p>Pick a patient and we'll route you to the right vet on staff.</p>
+</section>
+
+<section class="roster">
+
+  <div class="plate active">
+    <div class="pin"></div>
+    <div class="status-tag">On duty</div>
+    <div class="plate-name">Dave</div>
+    <div class="plate-role">Cattle &amp; livestock</div>
+    <div class="plate-blurb">Founder of the practice. Field-tested, plain-spoken, no wasted words when a cow's in trouble.</div>
+    <a class="ask-btn" href="./vet.html">See Dave</a>
+  </div>
+
+  <div class="plate active">
+    <div class="pin"></div>
+    <div class="status-tag">On duty</div>
+    <div class="plate-name">Alice</div>
+    <div class="plate-role">Dogs &amp; cats</div>
+    <div class="plate-blurb">Newest vet on staff. Careful, warm, and just as quick to say "get to a clinic" when it matters.</div>
+    <a class="ask-btn" href="./alice-vet.html">See Alice</a>
+  </div>
+
+  <div class="plate locked">
+    <div class="pin"></div>
+    <div class="status-tag">Coming soon</div>
+    <div class="plate-name">Exotics</div>
+    <div class="plate-role">Birds, reptiles &amp; small pets</div>
+    <div class="locked-note">Hiring in progress</div>
+  </div>
+
+  <div class="plate locked">
+    <div class="pin"></div>
+    <div class="status-tag">Coming soon</div>
+    <div class="plate-name">Horses</div>
+    <div class="plate-role">Equine</div>
+    <div class="locked-note">Hiring in progress</div>
+  </div>
+
+</section>
+
+<footer>
+  <div class="promise">Ask <span>before</span> you panic.</div>
+  <div class="poison-line">ASPCA Animal Poison Control: (888) 426-4435</div>
+  <div class="disclaimer">Dave and Alice are knowledge assistants, not licensed veterinarians. For active emergencies, call your vet or an emergency clinic directly.</div>
+</footer>
+
+</body>
+</html>
