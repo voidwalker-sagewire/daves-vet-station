@@ -3,287 +3,343 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dave's Vet Station — Who are we seeing today?</title>
-<meta name="description" content="Dave's Vet Station: pick your patient, get routed to the right vet." />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<title>Dave's Vet Station — Ask a vet before you panic</title>
+<meta name="description" content="Dave's Vet Station: friendly AI vets for livestock, dogs, cats, and horses. Ask what's going on with your animal and get calm, informed guidance — before you rush to the emergency vet." />
 <style>
+  /* ---- Air Force blue palette ---- */
   :root{
-    --navy-deep:#0A1F33;
-    --navy-panel:#0F2A47;
-    --af-blue:#00308F;
-    --af-blue-hi:#3D6FB4;
-    --brass:#C9A227;
-    --cloud:#F2F5F8;
-    --steel:#7F92A8;
-    --steel-dim:#4C5F73;
+    --afblue:#00308F;        /* Air Force blue — the signature */
+    --afblue-deep:#001F5B;   /* deeper shade for grounds */
+    --afblue-bright:#2E6BE6; /* brighter accent for interaction */
+    --ink:#0A1428;           /* near-black text */
+    --paper:#F5F7FB;         /* cool off-white */
+    --paper-warm:#FBFCFE;
+    --line:#D4DEEE;
+    --muted:#5B6B85;
+    --cross:#FFFFFF;         /* the cross is white on blue */
+    --amber:#E8A33D;         /* warm accent, used sparingly */
+    --shadow:0 20px 60px rgba(0,31,91,.18);
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html{-webkit-tap-highlight-color:transparent;}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   body{
-    background:var(--navy-deep);
-    color:var(--cloud);
-    font-family:'Inter',sans-serif;
-    min-height:100vh;
-    line-height:1.5;
+    margin:0;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
   }
-  a{color:inherit;text-decoration:none;}
+  .wrap{width:min(1060px,calc(100% - 40px));margin:0 auto}
 
-  /* ---- header ---- */
-  header{
-    display:flex;align-items:center;gap:12px;
-    padding:18px 20px 16px;
-    border-bottom:1px solid rgba(201,162,39,0.35);
-  }
-  .badge{width:38px;height:38px;flex-shrink:0;}
-  .wordmark{
-    font-family:'Oswald',sans-serif;
-    font-weight:700;
-    font-size:1.05rem;
-    letter-spacing:0.04em;
-    text-transform:uppercase;
-    color:var(--cloud);
-  }
-  .wordmark span{color:var(--af-blue-hi);}
-  .tagline{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:0.62rem;
-    color:var(--steel);
-    letter-spacing:0.06em;
-    margin-top:2px;
-  }
-
-  /* ---- hero ---- */
-  .hero{
+  /* ---- The blue cross mark (merch-ready SVG-in-CSS) ---- */
+  .cross-mark{
+    display:inline-block;
     position:relative;
-    padding:44px 20px 28px;
-    overflow:hidden;
-    text-align:center;
+    background:var(--afblue);
+    border-radius:22%;
   }
-  .hero-badge{
+  .cross-mark::before,
+  .cross-mark::after{
+    content:"";
     position:absolute;
-    top:50%;left:50%;
-    width:340px;height:340px;
-    transform:translate(-50%,-55%);
-    opacity:0.05;
-    pointer-events:none;
+    background:var(--cross);
+    border-radius:2px;
   }
+  /* vertical bar */
+  .cross-mark::before{
+    left:50%;top:22%;
+    width:18%;height:56%;
+    transform:translateX(-50%);
+  }
+  /* horizontal bar */
+  .cross-mark::after{
+    top:50%;left:22%;
+    height:18%;width:56%;
+    transform:translateY(-50%);
+  }
+  .cross-lg{width:96px;height:96px}
+  .cross-sm{width:34px;height:34px}
+
+  /* ---- Header ---- */
+  header{
+    border-bottom:1px solid var(--line);
+    background:rgba(245,247,251,.85);
+    backdrop-filter:blur(10px);
+    position:sticky;top:0;z-index:20;
+  }
+  .head-inner{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.01em;font-size:1.15rem;color:var(--ink);text-decoration:none}
+  .brand .name span{color:var(--afblue)}
+  .head-tag{color:var(--muted);font-size:.85rem;font-weight:600}
+  @media(max-width:640px){.head-tag{display:none}}
+
+  /* ---- Hero ---- */
+  .hero{padding:74px 0 40px;text-align:center}
+  .hero .cross-lg{margin-bottom:26px;box-shadow:var(--shadow)}
   .hero h1{
-    position:relative;
-    font-family:'Oswald',sans-serif;
-    font-weight:700;
-    font-size:2rem;
-    letter-spacing:0.02em;
-    text-transform:uppercase;
-    color:var(--cloud);
-    max-width:320px;
-    margin:0 auto 10px;
+    font-size:clamp(2.4rem,6vw,4.2rem);
+    line-height:1.02;
+    letter-spacing:-.03em;
+    margin:0 0 18px;
+    font-weight:800;
   }
-  .hero p{
-    position:relative;
-    font-size:0.9rem;
-    color:var(--steel);
-    max-width:280px;
-    margin:0 auto;
+  .hero h1 .accent{color:var(--afblue)}
+  .hero .lede{
+    font-size:clamp(1.05rem,2.4vw,1.3rem);
+    color:var(--muted);
+    max-width:600px;margin:0 auto 14px;
+  }
+  .hero .sub{
+    font-size:.95rem;color:var(--muted);max-width:560px;margin:0 auto;
   }
 
-  /* ---- roster ---- */
+  /* ---- The front desk question ---- */
+  .desk{padding:26px 0 70px}
+  .desk-q{
+    text-align:center;
+    font-size:1.35rem;
+    font-weight:800;
+    letter-spacing:-.01em;
+    margin:0 0 8px;
+  }
+  .desk-sub{text-align:center;color:var(--muted);margin:0 0 34px;font-size:.98rem}
+
   .roster{
     display:grid;
-    grid-template-columns:1fr;
-    gap:14px;
-    padding:8px 18px 28px;
-    max-width:520px;
-    margin:0 auto;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
   }
-  @media(min-width:600px){
-    .roster{grid-template-columns:1fr 1fr;}
-  }
-  .plate{
+  @media(max-width:760px){.roster{grid-template-columns:1fr}}
+
+  .vet-card{
+    display:flex;flex-direction:column;
+    background:var(--paper-warm);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:28px 26px 24px;
+    text-decoration:none;color:inherit;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
     position:relative;
-    background:var(--navy-panel);
-    border:1px solid rgba(127,146,168,0.25);
-    border-radius:10px;
-    padding:20px 18px 18px;
-    transition:transform 0.15s ease, border-color 0.15s ease;
+    overflow:hidden;
   }
-  .plate.active:hover{
-    transform:translateY(-2px);
-    border-color:var(--af-blue-hi);
+  .vet-card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--shadow);
+    border-color:var(--afblue);
   }
-  .plate.locked{
-    opacity:0.5;
+  .vet-card .stripe{
+    position:absolute;top:0;left:0;right:0;height:6px;
+    background:var(--afblue);
   }
-  .pin{
-    position:absolute;
-    top:10px;left:10px;
-    width:8px;height:8px;
-    border-radius:50%;
-    background:var(--brass);
-    box-shadow:0 0 0 2px rgba(201,162,39,0.2);
+  .vet-top{display:flex;align-items:center;gap:14px;margin-bottom:16px;margin-top:4px}
+  .vet-badge{
+    width:56px;height:56px;flex:0 0 56px;
+    border-radius:14px;
+    background:var(--afblue);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.6rem;
   }
-  .status-tag{
-    display:inline-block;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:0.6rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:var(--af-blue-hi);
-    border:1px solid rgba(61,111,180,0.4);
-    border-radius:4px;
-    padding:3px 7px;
-    margin-bottom:12px;
+  .vet-name{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1}
+  .vet-for{font-size:.82rem;color:var(--afblue);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:5px}
+  .vet-acr{font-size:.9rem;color:var(--muted);font-style:italic;margin:0 0 14px}
+  .vet-desc{font-size:.98rem;color:var(--ink);margin:0 0 20px;flex:1}
+  .vet-go{
+    display:inline-flex;align-items:center;gap:8px;
+    align-self:flex-start;
+    background:var(--afblue);color:#fff;
+    font-weight:700;font-size:.98rem;
+    padding:11px 20px;border-radius:11px;
+    transition:background .15s ease;
   }
-  .plate.locked .status-tag{
-    color:var(--steel);
-    border-color:rgba(127,146,168,0.3);
+  .vet-card:hover .vet-go{background:var(--afblue-bright)}
+
+  /* coming-soon staff */
+  .soon{
+    grid-column:1 / -1;
+    display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;
+    margin-top:8px;padding-top:26px;border-top:1px dashed var(--line);
   }
-  .plate-name{
-    font-family:'Oswald',sans-serif;
-    font-weight:600;
-    font-size:1.3rem;
-    letter-spacing:0.01em;
-    color:var(--cloud);
-  }
-  .plate-role{
-    font-size:0.78rem;
-    color:var(--steel);
-    margin:4px 0 10px;
-  }
-  .plate-blurb{
-    font-size:0.82rem;
-    color:#C7D3DE;
-    margin-bottom:16px;
-    min-height:38px;
-  }
-  .ask-btn{
-    display:block;
-    text-align:center;
-    background:var(--af-blue);
-    color:var(--cloud);
-    font-family:'Oswald',sans-serif;
-    font-weight:600;
-    font-size:0.82rem;
-    letter-spacing:0.05em;
-    text-transform:uppercase;
-    border-radius:7px;
-    padding:11px;
-    transition:background 0.15s ease;
-  }
-  .ask-btn:hover{background:var(--af-blue-hi);}
-  .locked-note{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:0.68rem;
-    color:var(--steel-dim);
-    text-align:center;
-    padding:11px;
-    border:1px dashed rgba(127,146,168,0.3);
-    border-radius:7px;
+  .soon-label{width:100%;text-align:center;color:var(--muted);font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+  .soon-pill{
+    border:1px solid var(--line);background:#fff;border-radius:999px;
+    padding:9px 16px;font-size:.9rem;color:var(--muted);font-weight:600;
+    display:flex;align-items:center;gap:7px;
   }
 
-  /* ---- footer strip ---- */
-  footer{
-    border-top:1px solid rgba(201,162,39,0.25);
-    padding:18px 20px 26px;
-    text-align:center;
+  /* ---- The promise strip ---- */
+  .promise{background:var(--afblue-deep);color:#fff;padding:56px 0}
+  .promise .wrap{text-align:center}
+  .promise h2{font-size:clamp(1.5rem,3.5vw,2.2rem);letter-spacing:-.02em;margin:0 0 14px;font-weight:800}
+  .promise p{color:#B9C7E4;max-width:620px;margin:0 auto 8px;font-size:1.05rem}
+  .promise .fine{color:#7E90B8;font-size:.85rem;max-width:640px;margin:22px auto 0}
+
+  /* how it works */
+  .how{padding:60px 0}
+  .how h2{text-align:center;font-size:clamp(1.5rem,3.5vw,2rem);letter-spacing:-.02em;margin:0 0 8px}
+  .how .how-sub{text-align:center;color:var(--muted);margin:0 0 40px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}}
+  .step{text-align:center;padding:0 10px}
+  .step .n{
+    width:44px;height:44px;margin:0 auto 14px;
+    border-radius:50%;
+    background:var(--afblue);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:1.1rem;
   }
-  .promise{
-    font-family:'Oswald',sans-serif;
-    font-size:0.95rem;
-    font-weight:600;
-    color:var(--cloud);
-    margin-bottom:6px;
-  }
-  .promise span{color:var(--brass);}
-  .poison-line{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:0.72rem;
-    color:var(--steel);
-    margin-bottom:12px;
-  }
-  .disclaimer{
-    font-size:0.68rem;
-    color:var(--steel-dim);
-    max-width:340px;
-    margin:0 auto;
-    line-height:1.6;
-  }
+  .step h3{margin:0 0 6px;font-size:1.1rem;letter-spacing:-.01em}
+  .step p{margin:0;color:var(--muted);font-size:.95rem}
+
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--muted)}
+  .foot-inner{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+  .foot-brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--ink)}
+  .foot-links{display:flex;gap:20px;font-size:.9rem}
+  .foot-links a{color:var(--muted);text-decoration:none}
+  .foot-links a:hover{color:var(--afblue)}
+  .foot-note{width:100%;font-size:.82rem;color:var(--muted);margin-top:8px}
+
+  a:focus-visible,.vet-card:focus-visible{outline:3px solid var(--afblue-bright);outline-offset:3px;border-radius:12px}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 
 <header>
-  <svg class="badge" viewBox="0 0 100 100" aria-hidden="true">
-    <circle cx="50" cy="50" r="47" fill="none" stroke="#00308F" stroke-width="5"/>
-    <rect x="42" y="18" width="16" height="64" fill="#00308F"/>
-    <rect x="18" y="42" width="64" height="16" fill="#00308F"/>
-  </svg>
-  <div>
-    <div class="wordmark">DAVE'S <span>VET STATION</span></div>
-    <div class="tagline">FRONT DESK · CHECK-IN</div>
+  <div class="wrap head-inner">
+    <a class="brand" href="/">
+      <span class="cross-mark cross-sm" aria-hidden="true"></span>
+      <span class="name">Dave's <span>Vet Station</span></span>
+    </a>
+    <span class="head-tag">Ask a vet before you panic</span>
   </div>
 </header>
 
-<section class="hero">
-  <svg class="hero-badge" viewBox="0 0 100 100" aria-hidden="true">
-    <circle cx="50" cy="50" r="47" fill="none" stroke="#F2F5F8" stroke-width="4"/>
-    <rect x="42" y="18" width="16" height="64" fill="#F2F5F8"/>
-    <rect x="18" y="42" width="64" height="16" fill="#F2F5F8"/>
-  </svg>
-  <h1>Who are we seeing today?</h1>
-  <p>Pick a patient and we'll route you to the right vet on staff.</p>
-</section>
-
-<section class="roster">
-
-  <div class="plate active">
-    <div class="pin"></div>
-    <div class="status-tag">On duty</div>
-    <div class="plate-name">Dave</div>
-    <div class="plate-role">Cattle &amp; livestock</div>
-    <div class="plate-blurb">Founder of the practice. Field-tested, plain-spoken, no wasted words when a cow's in trouble.</div>
-    <a class="ask-btn" href="./vet.html">See Dave</a>
-  </div>
-
-  <div class="plate active">
-    <div class="pin"></div>
-    <div class="status-tag">On duty</div>
-    <div class="plate-name">Alice</div>
-    <div class="plate-role">Dogs &amp; cats</div>
-    <div class="plate-blurb">Newest vet on staff. Careful, warm, and just as quick to say "get to a clinic" when it matters.</div>
-    <a class="ask-btn" href="./alice-vet.html">See Alice</a>
-  </div>
-
-  <div class="plate locked">
-    <div class="pin"></div>
-    <div class="status-tag">Coming soon</div>
-    <div class="plate-name">Exotics</div>
-    <div class="plate-role">Birds, reptiles &amp; small pets</div>
-    <div class="locked-note">Hiring in progress</div>
-  </div>
-
-  <div class="plate locked">
-    <div class="pin"></div>
-    <div class="status-tag">Coming soon</div>
-    <div class="plate-name">Horses</div>
-    <div class="plate-role">Equine</div>
-    <div class="locked-note">Hiring in progress</div>
-  </div>
-
-</section>
-
-<footer style="border-top:1px solid #D4DEEE;background:#F5F7FB;padding:28px 20px;text-align:center;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
-  <div style="max-width:760px;margin:0 auto;">
-    <div style="display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
-      <a href="/terms.html" style="color:#00308F;text-decoration:none;font-weight:600;font-size:.9rem;">Terms of Service</a>
-      <a href="/privacy.html" style="color:#00308F;text-decoration:none;font-weight:600;font-size:.9rem;">Privacy Policy</a>
-      <a href="/disclaimer.html" style="color:#00308F;text-decoration:none;font-weight:600;font-size:.9rem;">Disclaimer</a>
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="cross-mark cross-lg" aria-hidden="true"></span>
+      <h1>Something's off with your animal.<br><span class="accent">Let's figure it out.</span></h1>
+      <p class="lede">Dave's Vet Station is a set of friendly AI vets. Tell one what you're seeing, in plain language, and get calm, informed guidance on what it might be and what to do right now.</p>
+      <p class="sub">Not a replacement for your vet — a steady first stop when you're worried and not sure if it's an emergency.</p>
     </div>
-    <p style="color:#5B6B85;font-size:.8rem;margin:0;line-height:1.5;">
-      Dave's Vet Station provides general animal-health information and is not a substitute for professional veterinary care.<br>
-      In an emergency, contact your veterinarian. Pet poison control (ASPCA): (888) 426-4435. &nbsp;·&nbsp; Operated by Sagewire Syndicate.
-    </p>
+  </section>
+
+  <!-- FRONT DESK / ROUTER -->
+  <section class="desk">
+    <div class="wrap">
+      <p class="desk-q">Who are we seeing today?</p>
+      <p class="desk-sub">Pick the vet who handles your animal.</p>
+
+      <div class="roster">
+
+        <!-- DAVE -->
+        <a class="vet-card" href="./vet.html">
+          <span class="stripe" aria-hidden="true"></span>
+          <div class="vet-top">
+            <span class="vet-badge" aria-hidden="true">🐄</span>
+            <div>
+              <h3 class="vet-name">Dave</h3>
+              <div class="vet-for">Cattle &amp; Livestock</div>
+            </div>
+          </div>
+          <p class="vet-acr">"Don't Always Visit the Emergency vet."</p>
+          <p class="vet-desc">The vet who started the station. Ask Dave about a cow, calf, or bull — he'll look up the animal, weigh what he's seeing, and tell you straight whether it can wait or needs a call.</p>
+          <span class="vet-go">Talk to Dave →</span>
+        </a>
+
+        <!-- ALICE -->
+        <a class="vet-card" href="./alice-vet.html">
+          <span class="stripe" aria-hidden="true"></span>
+          <div class="vet-top">
+            <span class="vet-badge" aria-hidden="true">🐕</span>
+            <div>
+              <h3 class="vet-name">Alice</h3>
+              <div class="vet-for">Dogs &amp; Cats</div>
+            </div>
+          </div>
+          <p class="vet-acr">"Always Loving, Informed, Calm Evaluation."</p>
+          <p class="vet-desc">The newest vet on staff. Tell Alice what your dog or cat is doing — she'll help you understand it and, when it's one of the dangerous ones, tell you to move fast.</p>
+          <span class="vet-go">Talk to Alice →</span>
+        </a>
+
+        <!-- JOE -->
+        <a class="vet-card" href="./joe-vet.html">
+          <span class="stripe" aria-hidden="true"></span>
+          <div class="vet-top">
+            <span class="vet-badge" aria-hidden="true">🐎</span>
+            <div>
+              <h3 class="vet-name">Joe</h3>
+              <div class="vet-for">Horses &amp; Equine</div>
+            </div>
+          </div>
+          <p class="vet-acr">"Just Observe & Evaluate."</p>
+          <p class="vet-desc">The horseman on staff. Tell Joe what your horse is doing — he'll help you stay calm, spot what matters, and know when it's colic or another emergency that needs the vet now.</p>
+          <span class="vet-go">Talk to Joe →</span>
+        </a>
+
+        <!-- COMING SOON STAFF -->
+        <div class="soon">
+          <span class="soon-label">More vets joining the station</span>
+          <span class="soon-pill">🦎 Exotics — coming soon</span>
+          <span class="soon-pill">🐎 Horses — coming soon</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE -->
+  <section class="promise">
+    <div class="wrap">
+      <h2>Built for the moment you're standing there, worried.</h2>
+      <p>Hands full. Phone in one hand. Not sure if what you're looking at is nothing or an emergency. That's the moment Dave's Vet Station is for — a calm, knowledgeable voice that helps you decide what to do next.</p>
+      <p class="fine">Dave's Vet Station gives general guidance and is not a substitute for hands-on veterinary care. In a true emergency, contact your veterinarian or an emergency clinic right away. For pet poisonings, call ASPCA Animal Poison Control at 888-426-4435.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how">
+    <div class="wrap">
+      <h2>How it works</h2>
+      <p class="how-sub">Three steps. No jargon.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>Pick your vet</h3>
+          <p>Cattle go to Dave. Dogs and cats go to Alice. Each one knows their own animals.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>Say what you see</h3>
+          <p>Plain language. Type it or talk it. Add a photo if it helps. No forms, no fuss.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>Get a straight answer</h3>
+          <p>What it might be, what to watch for, and whether it's time to call a real vet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <div class="foot-brand">
+        <span class="cross-mark cross-sm" aria-hidden="true"></span>
+        Dave's Vet Station
+      </div>
+      <div class="foot-links">
+        <a href="./vet.html">Dave</a>
+        <a href="./alice-vet.html">Alice</a>
+      </div>
+    </div>
+    <p class="foot-note">Dave's Vet Station provides general animal-health information and does not replace professional veterinary care. Named for Dave — and built to help you worry a little less.</p>
   </div>
 </footer>
 
